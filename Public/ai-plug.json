@@ -1,0 +1,12 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "Kalshi Markets",
+  "name_for_model": "kalshi_markets",
+  "description_for_human": "Live Kalshi mention markets",
+  "description_for_model": "Fetches Kalshi markets with strikes, hits, and misses",
+  "auth": { "type": "none" },
+  "api": {
+    "type": "openapi",
+    "url": "https://YOUR-VERCEL-URL.vercel.app/openapi.yaml"
+  }
+}
