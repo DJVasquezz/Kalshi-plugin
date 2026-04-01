@@ -4,7 +4,7 @@ info:
   version: 1.0
 
 servers:
-  - url: https://kalshi-plugin-davidvasquez47-8634s-projects.vercel.app/
+  - url: https://project-nt8j9.vercel.app/
 
 paths:
   /api/markets:
