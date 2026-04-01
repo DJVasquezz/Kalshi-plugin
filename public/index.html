@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kalshi Markets</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+    h1 { color: #333; }
+    input { padding: 8px; width: 300px; margin-bottom: 20px; }
+    table { border-collapse: collapse; width: 100%; background: #fff; }
+    th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+    th { background-color: #4CAF50; color: white; }
+    tr:nth-child(even) { background-color: #f2f2f2; }
+    tr:hover { background-color: #ddd; }
+    #loading { font-style: italic; color: #666; }
+  </style>
+</head>
+<body>
+  <h1>Kalshi Markets</h1>
+  <input type="text" id="search" placeholder="Filter by keyword..." />
+  <div id="loading">Loading markets...</div>
+  <table id="marketsTable" style="display:none;">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Ticker</th>
+        <th>Expiration</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+
+  <script>
+    const table = document.getElementById('marketsTable');
+    const tbody = table.querySelector('tbody');
+    const loading = document.getElementById('loading');
+    const searchInput = document.getElementById('search');
+
+    let allMarkets = [];
+
+    async function fetchMarkets(query = "") {
+      loading.style.display = "block";
+      table.style.display = "none";
+      tbody.innerHTML = "";
+
+      try {
+        const url = query ? `/api/market?q=${encodeURIComponent(query)}` : '/api/market';
+        const response = await fetch(url);
+        const data = await response.json();
+        allMarkets = data;
+
+        displayMarkets(allMarkets);
+      } catch (err) {
+        loading.textContent = `Error loading markets: ${err.message}`;
+        console.error(err);
+      }
+    }
+
+    function displayMarkets(markets) {
+      tbody.innerHTML = "";
+      if (markets.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="3">No markets found.</td></tr>`;
+      } else {
+        markets.forEach(m => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${m.title}</td>
+            <td>${m.ticker}</td>
+            <td>${new Date(m.expiration).toLocaleString()}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+      loading.style.display = "none";
+      table.style.display = "table";
+    }
+
+    searchInput.addEventListener('input', () => {
+      const query = searchInput.value.trim().toLowerCase();
+      const filtered = allMarkets.filter(m => m.title.toLowerCase().includes(query));
+      displayMarkets(filtered);
+    });
+
+    // Initial load
+    fetchMarkets();
+  </script>
+</body>
+</html>
